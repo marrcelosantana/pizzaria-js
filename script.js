@@ -1,5 +1,9 @@
 // * LISTAGEM DAS PIZZAS
 
+let modalQt = 1;
+let cart = [];
+let modalKey = 0;
+
 pizzaJson.map((item, index) => {
   //Clonando o modelo HTML.
   let pizzaItem = document.querySelector('.models .pizza-item').cloneNode(true);
@@ -14,9 +18,9 @@ pizzaJson.map((item, index) => {
   //Realizando as ações ao clicar em um produto.
   pizzaItem.querySelector('a').addEventListener('click', (event) => {
     event.preventDefault();
-
     let key = event.target.closest('.pizza-item').getAttribute('data-key'); //Dando uma key para cada item.
     modalQt = 1;
+    modalKey = key;
 
     //Preenchendo os dados do modal de acordo com a key dos produtos.
     document.querySelector('.pizzaInfo h1').innerHTML = pizzaJson[key].name;
@@ -42,7 +46,7 @@ pizzaJson.map((item, index) => {
     setTimeout(() => {
       document.querySelector('.pizzaWindowArea').style.opacity = 1;
     }, 200)
-  })
+  });
   
   //Pegando o item criado e jogando na div para aparecer listando.
   document.querySelector('.pizza-area').append( pizzaItem );
@@ -54,10 +58,57 @@ function closeModal() {
   document.querySelector('.pizzaWindowArea').style.opacity = 0;
   setTimeout(() => {
     document.querySelector('.pizzaWindowArea').style.display = 'none';
-  }, 500)
+  }, 500);
 }
 
 //Colocando a função closeModal() nos botões.
 document.querySelectorAll('.pizzaInfo--cancelButton, .pizzaInfo--cancelMobileButton').forEach((item) => {
   item.addEventListener('click', closeModal);
+});
+
+//Funções de aumentar e diminuir o número de pizzas no modal.
+document.querySelector('.pizzaInfo--qtmenos').addEventListener('click', () => {
+  if(modalQt > 1){
+    modalQt--;
+    document.querySelector('.pizzaInfo--qt').innerHTML = modalQt;
+  }
+});
+
+document.querySelector(".pizzaInfo--qtmais").addEventListener('click', () => {
+  modalQt++;
+  document.querySelector('.pizzaInfo--qt').innerHTML = modalQt;
+});
+
+//Função de selecionar os tamanhos das pizzas no modal.
+document.querySelectorAll('.pizzaInfo--size').forEach((size) => {
+  size.addEventListener('click', () => {
+    document.querySelector('.pizzaInfo--size.selected').classList.remove('selected');
+    size.classList.add('selected');
+  })
+});
+
+//Função do botão de ADICIONAR no modal.
+document.querySelector('.pizzaInfo--addButton').addEventListener('click', () => {
+  let size = parseInt(document.querySelector('.pizzaInfo--size.selected').getAttribute('data-key'));
+
+  /*Verificando se já existe um item com mesmo tamanho e id, então ao invés de adicionar um novo, 
+  ele aumenta a quantidade do que já existe.*/
+
+  let identifier = pizzaJson[modalKey].id+'@'+size;
+  let key = cart.findIndex((item) => {
+    return item.identifier == identifier;
+  });
+
+  if(key !== -1){
+    cart[key].qt += modalQt;
+  }else{
+    cart.push({
+      identifier,
+      id: pizzaJson[modalKey].id,
+      size,
+      qt: modalQt
+    });
+  }
+  closeModal();
 })
+
