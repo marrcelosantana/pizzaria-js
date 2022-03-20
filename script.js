@@ -1,4 +1,4 @@
-// * LISTAGEM DAS PIZZAS
+// ** LISTAGEM DAS PIZZAS **
 
 let modalQt = 1;
 let cart = [];
@@ -52,7 +52,7 @@ pizzaJson.map((item, index) => {
   document.querySelector('.pizza-area').append( pizzaItem );
 });
 
-// * EVENTOS DO MODAL 
+// ** EVENTOS DO MODAL **
 
 function closeModal() {
   document.querySelector('.pizzaWindowArea').style.opacity = 0;
